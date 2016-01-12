@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -35,15 +37,24 @@
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
+            android:label="Sign in" />
         <activity
             android:name=".FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".Option1" />
-        <activity android:name=".Option2" />
-        <activity android:name=".Favorites" />
+        <activity
+            android:name=".Option1"
+            android:label="My Kitchen"
+            />
+        <activity
+            android:name=".Option2"
+            android:label="Popular"
+            />
+        <activity
+            android:name=".Favorites"
+            android:label="Favorites"
+            />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -58,7 +69,11 @@
 
         <activity
             android:name=".Nearby"
-            android:label="@string/title_activity_nearby"></activity>
+            android:label="@string/title_activity_nearby" />
+        <activity
+            android:name=".NewUserInput"
+            android:label="New Dish" >
+        </activity>
     </application>
 
 </manifest>
