@@ -25,11 +25,6 @@ public class NewUserInput extends AppCompatActivity {
     Date todayNow;
     Calendar todayNowCalendar;
 
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,18 +54,33 @@ public class NewUserInput extends AppCompatActivity {
                     directory.mkdirs();
                     FileOutputStream outputStream = new FileOutputStream(file);
                     OutputStreamWriter outputWriter=new OutputStreamWriter(outputStream);
+                    if(name.isEmpty())
+                    {
+                        Toast.makeText(getBaseContext(), "Please enter the name of your dish!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    else if(date.isEmpty()){
+                        Toast.makeText(getBaseContext(), "Please enter the date your dish was made!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    else{
                     outputWriter.write(name + "\n" + date);
                     outputWriter.close();
+
                     Toast.makeText(getBaseContext(), "File Created!",
                             Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 }   catch (FileNotFoundException e){
                     e.printStackTrace();
                 }
                     catch (IOException e) {
                     e.printStackTrace();
                 }
+
             }
-        });
+        }
+        );
 
     }
 
