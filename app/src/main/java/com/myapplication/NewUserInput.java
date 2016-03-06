@@ -11,19 +11,23 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
 import java.util.Calendar;
+
+import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Environment;
+
+import org.w3c.dom.Text;
 
 
 public class NewUserInput extends AppCompatActivity {
 
     EditText nameInput, dateInput;
     Button buttonSave;
-    String name, date;
-    Date todayNow;
-    Calendar todayNowCalendar;
+    String name, currentDate;
+    String date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +37,12 @@ public class NewUserInput extends AppCompatActivity {
         nameInput=(EditText) findViewById(R.id.Name);
         dateInput=(EditText) findViewById(R.id.DateCreated);
         buttonSave=(Button) findViewById(R.id.saveButton);
+        Calendar todayNowCalendar = Calendar.getInstance();
+        todayNowCalendar.getTime();
+        SimpleDateFormat todayNow = new SimpleDateFormat("MM/dd/yyyy");
+        currentDate = todayNow.format(todayNowCalendar.getTime());
 
+        dateInput.setHint(currentDate);
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,29 +50,29 @@ public class NewUserInput extends AppCompatActivity {
 
                name=nameInput.getText().toString();
                date=dateInput.getText().toString();
-                //(date==){
-               //  todayNowCalendar = Calendar.getInstance();
-                //  todayNowCalendar.setTime(todayNow);
-                 // date = todayNow.getMonth();
-              //}
+                if(date.isEmpty())
+                    date = "11/11/1111";
 
                 try {
-                    File sdCard = Environment.getExternalStorageDirectory();
-                    File directory = new File(sdCard.getAbsolutePath()+ "/Recipes");
-                    File file = new File(directory, "recipe.txt");
-                    directory.mkdirs();
-                    FileOutputStream outputStream = new FileOutputStream(file);
-                    OutputStreamWriter outputWriter=new OutputStreamWriter(outputStream);
+
                     if(name.isEmpty())
                     {
                         Toast.makeText(getBaseContext(), "Please enter the name of your dish!",
                                 Toast.LENGTH_SHORT).show();
                     }
-                    else if(date.isEmpty()){
-                        Toast.makeText(getBaseContext(), "Please enter the date your dish was made!",
-                                Toast.LENGTH_SHORT).show();
+                   else if(!date.matches("\\d\\d/\\d\\d/\\d\\d\\d\\d")){
+                       Toast.makeText(getBaseContext(), "Please enter the date your dish was made in Date/Month/Year format!",
+                             Toast.LENGTH_SHORT).show();
                     }
-                    else{
+                    else {
+                        if(date=="11/11/1111"){
+                        date=currentDate;}
+                        File sdCard = Environment.getExternalStorageDirectory();
+                        File directory = new File(sdCard.getAbsolutePath()+ "/Recipes");
+                        File file = new File(directory,name+".txt");
+                        directory.mkdirs();
+                        FileOutputStream outputStream = new FileOutputStream(file);
+                        OutputStreamWriter outputWriter=new OutputStreamWriter(outputStream);
                     outputWriter.write(name + "\n" + date);
                     outputWriter.close();
 
@@ -83,7 +92,5 @@ public class NewUserInput extends AppCompatActivity {
         );
 
     }
-
-
 
 }
