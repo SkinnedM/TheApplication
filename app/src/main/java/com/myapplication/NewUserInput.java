@@ -34,9 +34,11 @@ public class NewUserInput extends AppCompatActivity {
 
     EditText nameInput, dateInput, creatorInput;
     Button buttonSave, cameraButton, galleryButton;
-    String name, currentDate, date, creator, fileLocation;
-    Bitmap picture;
+    String name, currentDate, date, creator;
+    String fileLocation = "1";
     final int RESULT_LOAD_IMG = 1111;
+    final int REQUEST_TAKE_PHOTO = 1;
+
 
 
     @Override
@@ -59,6 +61,10 @@ public class NewUserInput extends AppCompatActivity {
 
         cameraButton.setOnClickListener(new View.OnClickListener() { //When the camera button is pressed.
                                             public void onClick(View c) {
+                                            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                                if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                                                    startActivityForResult(cameraIntent, REQUEST_TAKE_PHOTO);
+                                                }
 
                                             }
 
@@ -86,7 +92,6 @@ public class NewUserInput extends AppCompatActivity {
                                                   date = "11/11/1111";
 
                                               try {
-
                                                   if (name.isEmpty()) { //If name is empty tell user that there must be a name in the field.
                                                       Toast.makeText(getBaseContext(), "Please enter the name of your dish!",
                                                               Toast.LENGTH_SHORT).show();
@@ -97,15 +102,13 @@ public class NewUserInput extends AppCompatActivity {
                                                       if (date == "11/11/1111") { //If the date field is empty, put the current date that the hint shows.
                                                           date = currentDate;
                                                       }
+
                                                       FileOutputStream outputStream = new FileOutputStream(filePath(name, ".txt")); //New file output stream object.
                                                       OutputStreamWriter outputWriter = new OutputStreamWriter(outputStream); //New file writing object.
                                                       outputWriter.write(name + "\n" + date + "\n" + creator); //Writes name, date, and creator, each followed by a newline character.
-                                                      Bitmap finalSelectedImage = BitmapFactory.decodeFile(fileLocation); //Converts file object to bitmap.
-                                                      ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                                                      finalSelectedImage.compress(Bitmap.CompressFormat.JPEG, 40, bytes); //Bitmap to compressed JPG.
-                                                      FileOutputStream galleryOutput = new FileOutputStream(filePath(name, ".jpg")); //New file writing object for image from gallery.
-                                                      galleryOutput.write(bytes.toByteArray());
-                                                      galleryOutput.close(); //Closes the gallery image writing object.
+                                                        if(fileLocation!="1") {
+                                                            imageWrite(fileLocation);
+                                                       }
                                                       outputWriter.close(); //Close the file writing object.
 
                                                       Toast.makeText(getBaseContext(), "File Created!",
@@ -138,6 +141,10 @@ public class NewUserInput extends AppCompatActivity {
             cursor.close();
             fileLocation = filePath;
         }
+        else if(requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK && picture !=null){
+            Bundle extras = picture.getExtras();
+          Bitmap finalCameraPicture =(Bitmap) extras.get("data");
+        }
     }
 
     protected File filePath(String name, String extension) { //Creates a file object with a name and a custom file extension.
@@ -146,5 +153,18 @@ public class NewUserInput extends AppCompatActivity {
         File file = new File(directory, name + extension); //New text file called the name.txt.
         directory.mkdirs(); //Create directories if they do not exist.
         return file;
+    }
+
+    protected void imageWrite(String fileLocation) {
+        Bitmap finalSelectedImage = BitmapFactory.decodeFile(fileLocation); //Converts file object to bitmap.
+          ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                 finalSelectedImage.compress(Bitmap.CompressFormat.JPEG, 40, bytes); //Bitmap to compressed JPG.
+            try{ FileOutputStream galleryOutput = new FileOutputStream(filePath(name, ".jpg")); //New file writing object for image from gallery.
+               galleryOutput.write(bytes.toByteArray());
+             galleryOutput.close(); //Closes the gallery image writing object.
+              }
+            catch (IOException e){
+                e.printStackTrace();
+            }
     }
 }
